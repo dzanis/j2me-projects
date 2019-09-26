@@ -1,7 +1,7 @@
 # Intrusion
 j2me game space shuter
 
-![Alt text](https://github.com/dzanis/Intrusion/blob/master/Intrusion/IntrusionScreenshot.png)
+![Alt text](https://github.com/dzanis/j2me-projects/blob/master/Intrusion/IntrusionScreenshot.png)
 
 ВТОРЖЕНИЕ v 1.5
 Игра разрабатываемая интузиастами команды GAMASTIC.
