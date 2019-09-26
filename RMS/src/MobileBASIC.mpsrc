@@ -1,0 +1,634 @@
+program MobileBASIC;
+uses basic;
+var
+rs: recordStore;
+db:array[1..50] of string;
+rms:array[1..50] of string;
+num:array[1..50] of integer;
+clicked,OK,exit,sav,red,soz:command; 
+label_id,x,l,col,exists,mis,v1,v2,v3:integer;
+f,f2,cit,est:string; 
+
+
+function zap(name: string): string;
+var
+n:string;
+textField_id:integer;
+begin //Функция 
+n:=name;
+showMenu(''+name+' уже есть!', CH_IMPLICIT);
+v1:= menuAppendString('Перезаписать');
+v2:= menuAppendString('Переименовать');
+v3:= menuAppendString('Назад'); 
+repeat 
+       
+      clicked := getClickedCommand;
+     delay(100);
+    until clicked <> emptyCommand; 
+   
+  
+    
+
+if menuGetSelectedIndex =v2  then 
+begin
+
+textField_id := formAddTextField('Имя', ''+name, 20, TF_ANY); 
+    showForm; 
+     begin 
+    OK := createCommand('OK', CM_OK, 1); 
+    addCommand(OK); 
+    repeat 
+      clicked := getClickedCommand; 
+      delay(100);
+    until clicked <> emptyCommand; 
+  end;
+exists:=0; 
+name:=formGetText(textField_id);
+zap:=name; 
+end; 
+if menuGetSelectedIndex = v1  then begin exists:=0;zap:=n; end;
+removeCommand(OK);
+clearForm;
+
+end;
+
+
+procedure vibor;
+var 
+len,index,r1,r2:integer;
+ begin //ВЫБОР
+
+//------------------------------- 
+
+    showMenu('MobileBASIC', CH_IMPLICIT); 
+  for x:=1 to col do  
+begin 
+  
+if 46<>ord(getChar(rms[x],0)) then num[x]:= menuAppendString(rms[x]); 
+delay(0);   
+end;
+mis:= menuAppendStringImage('Misc', loadImage('/f.png'));
+    exit := createCommand('Выход', CM_EXIT , 1); 
+ addCommand(exit); 
+
+    repeat 
+       
+      clicked := getClickedCommand;
+     delay(150);
+    until clicked <> emptyCommand; 
+    if clicked = exit then halt;
+removeCommand(exit);    
+    
+for x:=1 to col do  
+begin   
+if menuGetSelectedIndex =num[x]  then f:=rms[x];
+end;
+
+
+if menuGetSelectedIndex <> mis  then
+begin
+//Открываем выбранный файл;
+
+ rs := openRecordStore(f); 
+    cit := readRecordStoreEntry(rs, 1); 
+    closeRecordStore(rs);
+label_id := formAddString(copy(cit,8,256));
+showForm;
+begin 
+    
+ OK := createCommand('Назад', CM_EXIT, 1); 
+ sav := createCommand('Misc', CM_ITEM, 1);
+ soz := createCommand('Создать', CM_ITEM, 1);
+ red := createCommand('Удалить', CM_ITEM, 1); 
+ exit := createCommand('Выход', CM_ITEM, 1);
+   
+    addCommand(OK); 
+    addCommand(sav);
+    addCommand(soz);
+    addCommand(exit);
+    addCommand(red);
+    repeat 
+      clicked := getClickedCommand; 
+      delay(150);
+    until clicked <> emptyCommand; 
+  end;
+  end;
+ clearForm;
+removeCommand(OK);
+removeCommand(exit); 
+removeCommand(sav); 
+removeCommand(soz);
+removeCommand(red);
+ //clearForm; 
+ 
+end;
+
+
+
+procedure massiw;
+var
+len:integer;
+faili,z,s:string;
+begin//Загоняем имена файлов в МАССИВ!!!
+col:=0;
+faili:=list(1);
+z:='';
+len:=length(faili);
+ for x:=0 to len-1 do
+ begin
+s:=copy(faili,x,x+1);
+if s<>'|' then z:=z+s; 
+if s='|' then
+begin
+col:=col+1;
+rms[col]:=z;
+z:='';
+end; 
+end;
+l:=1;
+end;
+
+
+procedure misc;
+var
+clickedm,OKm,exitm,nm:command; 
+len,col2,r1,r2,textField_id:integer;
+faili2,z,s,text:string;
+begin//MISC********************
+z:='';
+col2:=0;
+faili2:=get_files('/0:/Misc'); 
+len:=length(faili2);
+ for x:=0 to len-1 do
+ begin
+s:=copy(faili2,x,x+1);
+if s<>'|' then z:=z+s; 
+if s='|' then
+begin
+col2:=col2+1;
+db[col2]:=z;
+z:='';
+end; 
+end;
+repeat 
+begin//ВЫБОР B Misc
+removeCommand(OKm);
+removeCommand(exitm);
+removeCommand(nm);
+ showMenu('Misc', CH_IMPLICIT); 
+for x:=1 to col2 do  
+begin
+    num[x]:= menuAppendString(db[x]); 
+delay(0);   
+end;
+
+    exitm := createCommand('Назад', CM_EXIT , 1); 
+ addCommand(exitm); 
+
+    repeat 
+       
+      clickedm := getClickedCommand;
+     delay(150);
+    until clickedm <> emptyCommand; 
+end;   
+    
+    
+for x:=1 to col2 do  
+begin   
+if menuGetSelectedIndex =num[x]  then f2:=db[x];
+end;
+if clickedm <> exitm  then
+begin
+//Открываем выбранный файл
+text:=''; 
+text:=read_file_a('/0:/Misc/'+f2);
+label_id := formAddString(copy(text,0,256));
+showForm;
+begin 
+    
+ nm := createCommand('Назад', CM_EXIT, 1); 
+ OKm := createCommand('RMS', CM_ITEM, 1);  
+    addCommand(nm); 
+    addCommand(OKm);
+    repeat 
+      clickedm := getClickedCommand; 
+      delay(150);
+    until clickedm <> emptyCommand; 
+  end; end;
+
+if clickedm = OKm then 
+begin //Сохраняем в рмс басика
+removeCommand(OKm);
+removeCommand(exitm);
+removeCommand(nm);
+clearForm;
+exists:=0;
+begin
+textField_id := formAddTextField('Сохранить как?', ''+f2, 20, TF_ANY); 
+    showForm; 
+     begin 
+    OK := createCommand('OK', CM_OK, 1); 
+    addCommand(OK); 
+    repeat 
+      clicked := getClickedCommand; 
+      delay(100);
+    until clicked <> emptyCommand; 
+  end;
+  f2:=formGetText(textField_id);
+  removeCommand(OK);
+  clearForm;
+  
+end;
+for x:=1 to col do  
+begin   
+if f2=rms[x]  then exists:=1;
+end;
+if exists=1 then  f2:=zap(f2);
+if exists=0  then
+begin
+x:=length(text);
+x:=x+8;
+r1:=trunc(x/256);
+r2:=x-(r1*256);
+deleteRecordStore(f2);
+label_id := formAddString('Подождите!');
+showForm;
+write_rs(f2,text,r1,r2);
+l:=0;
+end;
+clearForm;
+end;
+
+
+until  clickedm = exitm;
+
+end;
+
+
+
+procedure save;
+var
+OKs:command;
+textField_id:integer;
+p,fil:string;
+begin //SAVE
+p:='.?';
+fil:=f;
+
+
+begin
+textField_id := formAddTextField('Сохранить как?', ''+f+p, 20, TF_ANY); 
+    showForm; 
+     begin 
+    OK := createCommand('OK', CM_OK, 1); 
+    addCommand(OK); 
+    repeat 
+      clicked := getClickedCommand; 
+      delay(100);
+    until clicked <> emptyCommand; 
+  end;
+  f:=formGetText(textField_id);
+ removeCommand(OK);
+clearForm; 
+
+end;
+exists:=file_exists('/0:/Misc/'+f);
+if exists<>0 then f:=zap(f);
+if menuGetSelectedIndex =v1  then  delete_file('/0:/Misc/'+f);
+if exists=0 then 
+begin
+label_id := formAddString('Подождите!');
+showForm;
+read_rs(fil,'/0:/Misc/'+f);
+
+end;
+
+ 
+clearForm;
+end;
+
+
+procedure sozdatj;
+var 
+soh:command;
+id,textField_id,r1,r2:integer;
+stroka,text:string;
+begin//СОЗДАТЬ
+f:='';
+id:=0;
+repeat
+id:=id+1;
+begin
+    id := formAddTextField('', stroka, 256, TF_ANY); 
+    showForm; 
+end;    
+     begin 
+    OK := createCommand('ENTER', CM_OK, 1);
+    soh := createCommand('LIST', CM_EXIT, 1); 
+    addCommand(OK); 
+    addCommand(soh);
+    repeat 
+      clicked := getClickedCommand; 
+      delay(150);
+    until clicked <> emptyCommand; 
+  removeCommand(OK); 
+  removeCommand(soh);  
+  end;
+ until clicked = soh; 
+ text:='';
+for x:=0 to id do
+begin 
+if formGetText(x)<>'' then text:=text+formGetText(x)+chr(10); 
+end;
+clearForm;
+OK := createCommand('OK', CM_OK, 1);
+textField_id := formAddTextField('Имя',f, 10, TF_ANY); 
+    showForm;
+    addCommand(OK);
+ 
+  
+    repeat 
+      clicked := getClickedCommand; 
+      delay(150);
+    until clicked <> emptyCommand; 
+    f:=formGetText(textField_id); 
+   
+ 
+begin //Сохраняем в рмс басика
+exists:=0;
+for x:=1 to col do  
+begin   
+if f=rms[x]  then exists:=1;
+end;
+if exists=1 then  f:=zap(f);
+if exists=0  then
+begin
+x:=length(text);
+x:=x+8;
+r1:=trunc(x/256);
+r2:=x-(r1*256);
+deleteRecordStore(f2);
+write_rs(f,text,r1,r2);
+
+l:=0;
+end;
+end;
+ removeCommand(OK); 
+clearForm;
+ 
+end;
+
+procedure redactor;
+var
+u1,u2:integer;
+begin//Удалить
+showMenu('Удалить?', CH_IMPLICIT);
+u1:= menuAppendString('Нет');
+u2:= menuAppendString('Да');
+ 
+repeat 
+      
+      clicked := getClickedCommand;
+     delay(100);
+    until clicked <> emptyCommand; 
+   
+if menuGetSelectedIndex =u2  then
+begin
+ deleteRecordStore(f);
+ begin
+showAlert(f, 'Удалён!', loadImage('/icon.png'), ALERT_WARNING); 
+    playAlertSound; 
+delay(2000); 
+showForm;   
+end;
+l:=0;
+end;
+end;
+
+
+begin //ЯДРО
+{begin
+showAlert('', 'Программа предназначена для сохранения записей программы MobileBASIC в папку Misc.Файлы "*.bas" сохраняются как "Autorun.bas".Другим файлам выбор расширения на ваше усмотрение!А так-же возможна запись файлов из Misc в RMS!Допустим текст программы вы теперь можете написать каким либо другим текстовым редактором!Теперь вы можете редактировать бейсиком различные файлы!Так что программисты дерзайте ,возможности мобильного бейсика расширены!Спасибо всем кто помог! © dzaniss', loadImage('/icon.png'), ALERT_INFO); 
+    playAlertSound;
+    OK := createCommand('OK', CM_OK, 1); 
+    addCommand(OK); 
+
+    repeat 
+      delay(150); 
+    until getClickedCommand = OK;
+ removeCommand(OK); 
+showForm;   
+end;}
+repeat
+if l<>1 then massiw;
+vibor;
+
+if menuGetSelectedIndex = mis  then misc;
+if (clicked = sav) then save;if (clicked = red) then redactor;
+if (clicked = soz)  then sozdatj; 
+
+clearForm;
+until clicked = exit;
+halt;
+end.
+
+
+
+
+
+
+
+
+
+
+
+{xis:=0;
+for x:=1 to col do  
+begin   
+if z=rms[x]  then xis:=1;
+end;
+if xis=1 then 
+begin
+showMenu(''+z+' уже есть!', CH_IMPLICIT);
+v1:= menuAppendString('Перезаписать');
+v2:= menuAppendString('Переименовать');
+v3:= menuAppendString('Назад'); 
+repeat 
+      delay(10); 
+      clickedm := getClickedCommand;
+     delay(100);
+    until clickedm <> emptyCommand; 
+   
+  
+    
+
+if menuGetSelectedIndex =v2  then 
+begin
+repeat
+textField_id := formAddTextField('Имя', ''+z, 10, TF_ANY); 
+    showForm; 
+     begin 
+    OKm := createCommand('OK', CM_OK, 1); 
+    addCommand(OKm); 
+    repeat 
+      clickedm := getClickedCommand; 
+      delay(100);
+    until clickedm <> emptyCommand; 
+  end; 
+f:=formGetText(textField_id);  
+removeCommand(OKm);
+clearForm;
+until  z=f ;
+if menuGetSelectedIndex <>v3  then est:=zap(text,f);
+end;
+
+end;
+if xis<>1 then est:=zap(text,f);
+end;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{var rs: recordStore; 
+    entryIdx: integer; 
+    rsEnumIdx,label_id : integer; 
+    data,s: string;
+OK,clicked:command; 
+begin 
+  rs := OpenRecordStore('lis'); 
+  //entryIdx := AddRecordStoreEntry(rs, 'First Entry'); 
+  //entryIdx := AddRecordStoreEntry(rs, 'Second Entry'); 
+  //entryIdx := AddRecordStoreEntry(rs, 'Third entry'); 
+
+  rsEnumIdx := EnumerateRecords(rs); 
+
+  repeat 
+    data := NextRecord(rsEnumIdx); 
+    s:=s+data;
+    debug(data); 
+  until data = ''; 
+
+  //DeleteRecordStoreEntry(rs, 2); 
+
+  //UpdateRSEnumeration(rsEnumIdx); 
+
+  //repeat 
+    //data := NextRecord(rsEnumIdx); 
+    //debug(data); 
+  //until data = ''; 
+
+  CloseRSEnumeration(rsEnumIdx); 
+  label_id := formAddString(' '+s); 
+    showForm; 
+ 
+begin 
+    OK := createCommand('OK', CM_OK, 1); 
+    addCommand(OK); 
+    repeat 
+      clicked := getClickedCommand; 
+      delay(100);
+    until clicked <> emptyCommand; 
+  end; 	
+     
+end.}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{var rs: recordStore;
+s:array[1..50] of string; 
+      index,col,s1: integer;  
+      name,imja: string; 
+label_id,textField_id: integer;
+OK,clicked:command;
+
+begin
+imja:='';
+
+//Запрашиваем имя хранилища
+textField_id := formAddTextField('Имя', ''+imja, 10, TF_ANY); 
+    showForm; 
+     begin 
+    OK := createCommand('OK', CM_OK, 1); 
+    addCommand(OK); 
+    repeat 
+      clicked := getClickedCommand; 
+      delay(100);
+    until clicked <> emptyCommand; 
+  end; 
+imja:=formGetText(textField_id);  
+removeCommand(OK);
+clearForm;
+name:='';
+// Считываем данные 
+    rs := openRecordStore(imja);
+    col:=getRecordStoreSize(rs);
+for index:=1 to col do
+begin 
+    name :=name+readRecordStoreEntry(rs, index); 
+end;
+//uses rsenum;
+    
+    closeRecordStore(rs);
+    s[1]:=list(1)} 
